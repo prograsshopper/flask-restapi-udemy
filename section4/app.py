@@ -8,12 +8,13 @@ items = []
 
 class Item(Resource):
     def get(self, name):
-        for item in items:
-            if item['name'] == name:
-                return item
-        return {'item': name}, 404
+        item = next(filter(lambda x: x['name'] == name, items), None)
+        return {'item': item}, 200 if item else 404
     
     def post(self, name):
+        if next(filter(lambda x: x['name'] == name, items), None):
+            return {'message': f'Item {name} is already in here!'}
+        
         data = request.get_json() # error if header is not proper type
         item = {'name': name,   'price': data['price']}
         items.append(item)
