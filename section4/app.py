@@ -5,6 +5,7 @@ from flask_jwt import JWT, jwt_required, current_identity
 from security import authenticate, identity
 
 app = Flask(__name__)
+app.config['PROPAGATE_EXCEPTIONS'] = True # To allow flask propagating exception even if debug is set to false on app
 app.secret_key = 'alltherglittersarenotgold'
 api = Api(app)
 
@@ -13,6 +14,13 @@ jwt = JWT(app, authenticate, identity) # /auth
 items = []
 
 class Item(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('price',
+        type=float,
+        required=True,
+        help="This field cannot be left blank!"
+    )
+
     @jwt_required()
     def get(self, name):
         return {'item': next(filter(lambda x: x['name'] == name, items), None)}

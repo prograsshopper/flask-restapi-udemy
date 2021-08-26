@@ -14,6 +14,6 @@ def authenticate(username, password):
     if user and safe_str_cmp(user.password, password):
         return user
 
-def identity(payload):
+def identity(payload): # content of JWT token
     user_id = payload['identity']
     return userid_table.get(user_id, None)
